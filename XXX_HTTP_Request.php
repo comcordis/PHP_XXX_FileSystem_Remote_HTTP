@@ -118,7 +118,7 @@ abstract class XXX_HTTP_Request
 		
 		if ($result == false)
 		{
-			trigger_error('Unable to open remote file');
+			trigger_error('Unable to open remote file', E_USER_ERROR);
 		}
 		
 		return $result;
