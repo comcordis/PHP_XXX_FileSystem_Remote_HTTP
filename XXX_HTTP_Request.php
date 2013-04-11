@@ -90,13 +90,13 @@ abstract class XXX_HTTP_Request
 			}		
 			
 			$result = curl_exec($curlHandler);
-			
-			curl_close($curlHandler);
-			
+						
 			if ($result == false)
 			{
 				trigger_error('Unable to open remote file: "' . $uri . '": ' . curl_error($curlHandler), E_USER_ERROR);
 			}
+			
+			curl_close($curlHandler);
 		}
 		else
 		{
