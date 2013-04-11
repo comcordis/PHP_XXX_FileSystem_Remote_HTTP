@@ -35,7 +35,7 @@ function curl_exec_follow($ch, &$maxredirect = null) {
       {
         curl_setopt($rch, CURLOPT_URL, $newurl);
         
-        XXX_Type::peakAtVariable($rch);
+        XXX_Type::peakAtVariable(curl_getinfo($rch));
         
         $header = curl_exec($rch);
         if (curl_errno($rch)) {
@@ -72,7 +72,7 @@ function curl_exec_follow($ch, &$maxredirect = null) {
     }
   }
   
-        XXX_Type::peakAtVariable($ch);
+        XXX_Type::peakAtVariable(curl_getinfo($ch));
   return curl_exec($ch);
 }
 
