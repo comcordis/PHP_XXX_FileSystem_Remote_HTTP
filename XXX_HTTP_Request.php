@@ -168,7 +168,7 @@ abstract class XXX_HTTP_Request
 			
 			// Follow redirection, up to 3 times
 			//curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, true); // Not combinable with open_base_dir's
-			curl_setopt($curlHandler, CURLOPT_MAXREDIRS, 3);
+			//curl_setopt($curlHandler, CURLOPT_MAXREDIRS, 3);
 			
 			
 			// Silently fail rather than returning an error page as content...
