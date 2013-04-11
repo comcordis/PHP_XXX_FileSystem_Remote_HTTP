@@ -48,7 +48,7 @@ abstract class XXX_HTTP_Request
 			curl_setopt($curlHandler, CURLOPT_HEADER, false);
 			
 			// Follow redirection, up to 3 times
-			curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, true);
+			//curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, true); // Not combinable with open_base_dir's
 			curl_setopt($curlHandler, CURLOPT_MAXREDIRS, 3);
 			
 			
