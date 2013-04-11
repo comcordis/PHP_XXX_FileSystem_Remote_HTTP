@@ -34,6 +34,9 @@ function curl_exec_follow($ch, &$maxredirect = null) {
       do
       {
         curl_setopt($rch, CURLOPT_URL, $newurl);
+        
+        XXX_Type::peakAtVariable($rch);
+        
         $header = curl_exec($rch);
         if (curl_errno($rch)) {
           $code = 0;
@@ -68,6 +71,8 @@ function curl_exec_follow($ch, &$maxredirect = null) {
       curl_setopt($ch, CURLOPT_URL, $newurl);
     }
   }
+  
+        XXX_Type::peakAtVariable($ch);
   return curl_exec($ch);
 }
 
