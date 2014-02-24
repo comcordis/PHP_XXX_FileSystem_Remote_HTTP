@@ -8,7 +8,7 @@ abstract class XXX_HTTP_Request
 		$result = false;
 		
 		$transportMethod = XXX_Default::toOption($transportMethod, array('uri', 'body'), 'uri');
-		$timeOut = XXX_Default::toPositiveInteger($timeOut, 5);
+		$timeOut = XXX_Default::toPositiveInteger($timeOut, 300);
 		
 		$encodedData = array();
 		
