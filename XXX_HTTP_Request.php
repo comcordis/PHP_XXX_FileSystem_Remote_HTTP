@@ -2,6 +2,49 @@
 
 abstract class XXX_HTTP_Request
 {
+	public static function composeKeyValuePair ($key, $value = '')
+	{
+		$result = '';
+		
+		if (XXX_Type::isArray($value))
+		{
+			if (XXX_Type::isAssociativeArray($value))
+			{
+				$i = 0;
+				
+				foreach ($value as $subKey => $subValue)
+				{
+					if ($i > 0)
+					{
+						$result .= '&';
+					}
+					
+					$result .= $key . '['. $subKey . ']' . '=' . XXX_String::encodeURIValue($subValue);
+					
+					++$i;
+				}
+			}
+			else
+			{
+				for ($i = 0, $iEnd = XXX_Array::getFirstLevelItemTotal($value); $i < $iEnd; ++$i)
+				{
+					if ($i > 0)
+					{
+						$result .= '&';
+					}
+					
+					$result .= $key . '['. $i . ']' . '=' . XXX_String::encodeURIValue($value[$i]);
+				}
+			}
+		}
+		else
+		{
+			$result = $key . '=' . XXX_String::encodeURIValue($value);
+		}
+		
+		return $result;
+	}
+
 	// If you pass in data a variable with a value with @/absolute/path/to/file.ext it will upload it, and the transport method needs to be post...
 	public static function execute ($uri = '', $transportMethod = 'uri', array $data = array(), $timeOut = 5, $ssl = false)
 	{
@@ -14,12 +57,10 @@ abstract class XXX_HTTP_Request
 		
 		foreach ($data as $key => $value)
 		{
-			$encodedData[] = $key . '=' . XXX_String::encodeURIValue($value);
+			$encodedData[] = self::composeKeyValuePair($key, $value);
 		}
 						
 		$content = XXX_Array::joinValuesToString($encodedData, '&');
-		
-		
 		
 		if ($transportMethod == 'uri')
 		{
@@ -35,6 +76,10 @@ abstract class XXX_HTTP_Request
 				}
 			}
 		}
+		
+		echo $uri;
+		echo '<br>';
+		echo $content;
 		
 		
 		if (function_exists('curl_init'))
