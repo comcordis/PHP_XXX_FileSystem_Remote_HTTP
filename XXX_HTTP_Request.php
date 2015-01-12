@@ -77,11 +77,6 @@ abstract class XXX_HTTP_Request
 			}
 		}
 		
-		echo $uri;
-		echo '<br>';
-		echo $content;
-		
-		
 		if (function_exists('curl_init'))
 		{		
 			$curlHandler = curl_init();
