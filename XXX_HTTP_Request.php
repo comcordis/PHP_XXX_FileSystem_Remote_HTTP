@@ -138,8 +138,11 @@ abstract class XXX_HTTP_Request
 						
 			if ($result == false)
 			{
+				echo 'Unable to open remote file: "' . $uri . '": ' . curl_error($curlHandler);
 				trigger_error('Unable to open remote file: "' . $uri . '": ' . curl_error($curlHandler), E_USER_ERROR);
 			}
+			
+			
 			
 			curl_close($curlHandler);
 		}
