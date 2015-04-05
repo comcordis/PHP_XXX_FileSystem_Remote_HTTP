@@ -60,27 +60,41 @@ abstract class XXX_HTTP_Request
 			$encodedData[] = self::composeKeyValuePair($key, $value);
 		}
 						
-		$content = XXX_Array::joinValuesToString($encodedData, '&');
-		
+		$encodedData = XXX_Array::joinValuesToString($encodedData, '&');
+
 		if ($transportMethod == 'uri')
 		{
-			if ($content != '')
+			if ($encodedData != '')
 			{
 				if (XXX_String::findFirstPosition($uri, '?') > 0)
 				{
-					$uri .= '&' . $content;
+					$uri .= '&' . $encodedData;
 				}
 				else
 				{
-					$uri .= '?' . $content;
+					$uri .= '?' . $encodedData;
 				}
 			}
 		}
 		
 		if (function_exists('curl_init'))
-		{		
+		{
 			$curlHandler = curl_init();
-			
+
+			$userAndPasswordMatches = XXX_String_Pattern::getMatches($uri, '://([^:]*:[^@]*)@');
+
+			if (XXX_Array::getFirstLevelItemTotal($userAndPasswordMatches[1]))
+			{
+				$userAndPassword = $userAndPasswordMatches[1][0];
+
+				$uri = XXX_String::replace($uri, $userAndPassword . '@', '');
+
+				curl_setopt($curlHandler, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+				curl_setopt($curlHandler, CURLOPT_USERPWD, $userAndPassword);
+			} 
+
+			curl_setopt($curlHandler, CURLOPT_VERBOSE, 1);
+			curl_setopt($curlHandler, CURLINFO_HEADER_OUT, 1);
 			
 			curl_setopt($curlHandler, CURLOPT_URL, $uri);
 			
@@ -93,36 +107,38 @@ abstract class XXX_HTTP_Request
 			}
 			
 			// Follow redirection, up to 3 times (TODO: Not combinable with open_base_dir's)
-			curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, true);
+			curl_setopt($curlHandler, CURLOPT_FOLLOWLOCATION, 1);
 			curl_setopt($curlHandler, CURLOPT_MAXREDIRS, 3);
 			
 			
 			// Silently fail rather than returning an error page as content...
-			curl_setopt($curlHandler, CURLOPT_FAILONERROR, true);
-			curl_setopt($curlHandler, CURLOPT_CONNECTTIMEOUT, 5);
+			curl_setopt($curlHandler, CURLOPT_FAILONERROR, 1);
+			// This one is buggy, do not use it
+			//curl_setopt($curlHandler, CURLOPT_CONNECTTIMEOUT, 5);
 			curl_setopt($curlHandler, CURLOPT_TIMEOUT, $timeOut);
 			
 			// Return into a variable
-			curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($curlHandler, CURLOPT_RETURNTRANSFER, 1);
 			
 			if ($transportMethod == 'body')
 			{
-				curl_setopt($curlHandler, CURLOPT_POST, true);
-	
-				curl_setopt($curlHandler, CURLOPT_POSTFIELDS, $content);
+  				curl_setopt($curlHandler, CURLOPT_CUSTOMREQUEST, 'POST');
+				curl_setopt($curlHandler, CURLOPT_POST, 1);
+				
+				curl_setopt($curlHandler, CURLOPT_POSTFIELDS, $data);
 			}
 			else
 			{
-				curl_setopt($curlHandler, CURLOPT_HTTPGET, true);
+				curl_setopt($curlHandler, CURLOPT_HTTPGET, 1);
 			}
 			
 			if ($ssl == false)
 			{
-				curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, false);
+				curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 0);
 			}
 			else if ($ssl)
 			{
-				curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, true);
+				curl_setopt($curlHandler, CURLOPT_SSL_VERIFYPEER, 1);
 				/*
 				0: Don’t check the common name (CN) attribute
 	    		1: Check that the common name attribute at least exists
@@ -132,13 +148,13 @@ abstract class XXX_HTTP_Request
 				
 				// Absolute path to CA certificate of peer (So cURL trusts any server/peer certificates issued by that CA
 				curl_setopt($curlHandler, CURLOPT_CAINFO, $ssl);
-			}		
+			}
 			
 			$result = curl_exec($curlHandler);
 						
 			if ($result == false)
 			{
-				trigger_error('Unable to open remote file: "' . $uri . '": ' . curl_error($curlHandler), E_USER_ERROR);
+				trigger_error('Unable to open remote file: "' . $uri . '": ' . curl_error($curlHandler) . '|' . curl_getinfo($curlHandler, CURLINFO_HEADER_OUT), E_USER_ERROR);
 			}
 			
 			curl_close($curlHandler);
