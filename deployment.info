@@ -1,0 +1,6 @@
+project:XXX_FileSystem_Remote_HTTP_PHP
+deployEnvironment:development
+checkout:master
+commitHash:3666e4baaa1992ed5e7167f9f69782ecc6619330
+timestamp:2015-04-13T09:44:19Z
+deployer:operations
