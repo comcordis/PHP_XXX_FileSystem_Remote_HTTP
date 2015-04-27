@@ -45,6 +45,20 @@ abstract class XXX_HTTP_Request
 		return $result;
 	}
 
+    public static function encodeData ($data = array())
+    {
+        $encodedData = array();
+
+        foreach ($data as $key => $value)
+        {
+            $encodedData[] = self::composeKeyValuePair($key, $value);
+        }
+
+        $encodedData = XXX_Array::joinValuesToString($encodedData, '&');
+
+        return $encodedData;
+    }
+
 	// If you pass in data a variable with a value with @/absolute/path/to/file.ext it will upload it, and the transport method needs to be post...
 	public static function execute ($uri = '', $transportMethod = 'uri', array $data = array(), $timeOut = 5, $ssl = false, $userAgentString = '')
 	{
@@ -52,15 +66,8 @@ abstract class XXX_HTTP_Request
 		
 		$transportMethod = XXX_Default::toOption($transportMethod, array('uri', 'body'), 'uri');
 		$timeOut = XXX_Default::toPositiveInteger($timeOut, 300);
-		
-		$encodedData = array();
-		
-		foreach ($data as $key => $value)
-		{
-			$encodedData[] = self::composeKeyValuePair($key, $value);
-		}
-						
-		$encodedData = XXX_Array::joinValuesToString($encodedData, '&');
+
+		$encodedData = self::encodeData(data);
 
 		if ($transportMethod == 'uri')
 		{
