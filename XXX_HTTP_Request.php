@@ -65,9 +65,10 @@ abstract class XXX_HTTP_Request
 		$result = false;
 		
 		$transportMethod = XXX_Default::toOption($transportMethod, array('uri', 'body'), 'uri');
+
 		$timeOut = XXX_Default::toPositiveInteger($timeOut, 300);
 
-		$encodedData = self::encodeData(data);
+		$encodedData = self::encodeData($data);
 
 		if ($transportMethod == 'uri')
 		{
@@ -102,7 +103,7 @@ abstract class XXX_HTTP_Request
 
 			curl_setopt($curlHandler, CURLOPT_VERBOSE, 1);
 			curl_setopt($curlHandler, CURLINFO_HEADER_OUT, 1);
-			
+
 			curl_setopt($curlHandler, CURLOPT_URL, $uri);
 			
 			// Do not include the header in the output
