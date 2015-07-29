@@ -89,6 +89,8 @@ abstract class XXX_HTTP_Request
 		{
 			$curlHandler = curl_init();
 
+            curl_setopt($curlHandler, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+
 			$userAndPasswordMatches = XXX_String_Pattern::getMatches($uri, '://([^:]*:[^@]*)@');
 
 			if (XXX_Array::getFirstLevelItemTotal($userAndPasswordMatches[1]))
